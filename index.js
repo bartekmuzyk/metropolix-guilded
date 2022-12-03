@@ -77,8 +77,10 @@ client.on("error", err => {
 	console.error(err);
 });
 
-client.on("messageCreate", message => {
-	if (message.member.bot || !message.content.startsWith(PREFIX) || message.content.length === PREFIX.length) return;
+client.on("messageCreate", async message => {
+	const executor = await message.member;
+
+	if (executor.bot || !message.content.startsWith(PREFIX) || message.content.length === PREFIX.length) return;
 
 	let commandName = message.content.replace(PREFIX, "");
 	/** @type {?string} */
@@ -95,7 +97,7 @@ client.on("messageCreate", message => {
 	const commandData = commands[commandName];
 
 	if (!commandData) {
-		message.createMessage({
+		await message.createMessage({
 			content: `Nie ma takiej komendy jak \`/${commandName}\`. Aby zobaczyć pełną listę komend, użyj \`/pomoc\`.`,
 			isPrivate: true,
 			replyMessageIds: [message.id]
@@ -103,6 +105,8 @@ client.on("messageCreate", message => {
 		return;
 	}
 	if (commandData.argumentConverter && argument) argument = commandData.argumentConverter(argument);
+
+	console.log(`====> ${executor.nickname} wykonuje /${commandName} <====`);
 
 	commandData.execute(message, client, argument)
 		.catch(async err => {
