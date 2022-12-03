@@ -106,12 +106,11 @@ client.on("messageCreate", async message => {
 	}
 	if (commandData.argumentConverter && argument) argument = commandData.argumentConverter(argument);
 
-	console.log(`====> ${executor.nickname} wykonuje /${commandName} <====`);
+	console.log(`====> ${executor.username} wykonuje /${commandName} <====`);
 
 	commandData.execute(message, client, argument)
 		.catch(async err => {
-			const member = await message.member;
-			console.error(`Error occurred while executing a command. Message info:\nAuthor: ${member.username}\nContent: ${message.content}\n\n${err}`);
+			console.error(`Error occurred while executing a command. Message info:\nAuthor: ${executor.username}\nContent: ${message.content}\n\n${err}`);
 			console.trace(err);
 		});
 });
