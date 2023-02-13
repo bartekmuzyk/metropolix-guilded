@@ -78,6 +78,11 @@ client.on("error", err => {
 });
 
 client.on("messageCreate", async message => {
+	if (process.env.DEBUG_ONLY_ALLOW_CHANNEL && message.channelID !== process.env.DEBUG_ONLY_ALLOW_CHANNEL) {
+		console.log("Got message, but DEBUG_ONLY_ALLOW_CHANNEL is set, and the origin of this message does not match the setting.");
+		return;
+	}
+
 	const executor = await message.member;
 
 	if (executor.bot || !message.content.startsWith(PREFIX) || message.content.length === PREFIX.length) return;
